@@ -23,7 +23,7 @@
     </appender>
 
     <!-- Logger for FileStorage -->
-    <logger name="com.xavlegbmaofff.todo.FileStorage" level="DEBUG"/>
+    <logger name="com.xavlegbmaofff.todo.data.datasource.FileStorage" level="DEBUG"/>
 
     <!-- Root logger -->
     <root level="INFO">

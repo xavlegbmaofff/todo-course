@@ -1,8 +1,10 @@
-package com.xavlegbmaofff.todo
+package com.xavlegbmaofff.todo.data.mappers
 
 import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.xavlegbmaofff.todo.data.model.Importance
+import com.xavlegbmaofff.todo.data.model.TodoItem
 import org.json.JSONObject
 import java.time.Instant
 
