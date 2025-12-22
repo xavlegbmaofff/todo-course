@@ -5,31 +5,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.xavlegbmaofff.todo.data.datasource.FileStorage
-import com.xavlegbmaofff.todo.presentation.edit.TodoEditScreen
+import com.xavlegbmaofff.todo.presentation.navigation.TodoNavigationGraph
 import com.xavlegbmaofff.todo.ui.theme.TodoAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 import org.slf4j.LoggerFactory
 import java.io.File
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val logger = LoggerFactory.getLogger(MainActivity::class.java)
-    private lateinit var storage: FileStorage
-    private lateinit var todoFile: File
+
+    @Inject
+    lateinit var storage: FileStorage
+
+    @Inject
+    lateinit var todoFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         logger.info("MainActivity onCreate started")
 
-        todoFile = File(filesDir, "todos.json")
-        storage = FileStorage()
-        storage.load(todoFile)
-
         enableEdgeToEdge()
         setContent {
             TodoAppTheme {
-                TodoEditScreen(
-                    todoItem = null,
-                    onSave = {},
-                    onBack = {}
+                TodoNavigationGraph(
+                    storage = storage,
+                    onSave = { saveData() }
                 )
             }
         }

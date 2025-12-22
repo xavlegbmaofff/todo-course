@@ -18,6 +18,10 @@ class FileStorage {
     val items: List<TodoItem>
         get() = _items.toList()
 
+    fun getItemByUid(uid: String?): TodoItem? {
+        return items.find { it.uid == uid }
+    }
+
     fun add(item: TodoItem) {
         logger.debug("Adding item: uid={}, text='{}', importance={}", item.uid, item.text, item.importance)
         pruneExpired()

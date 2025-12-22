@@ -50,7 +50,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -67,15 +67,15 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoEditScreen(
-    todoItem: TodoItem?,
+    todoItemUid: String?,
     onSave: (TodoItem) -> Unit,
     onBack: () -> Unit,
-    viewModel: TodoEditViewModel = viewModel()
+    viewModel: TodoEditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(todoItem) {
-        viewModel.initializeFromTodoItem(todoItem)
+    LaunchedEffect(todoItemUid) {
+        viewModel.initializeFromTodoItem(todoItemUid)
     }
 
     var showDatePicker by rememberSaveable { mutableStateOf(false) }
@@ -93,7 +93,7 @@ fun TodoEditScreen(
             TodoEditTopBar(
                 onBack = onBack,
                 onSave = {
-                    val item = viewModel.createTodoItem(todoItem?.uid)
+                    val item = viewModel.createTodoItem(todoItemUid)
                     onSave(item)
                 }
             )
@@ -416,29 +416,48 @@ private fun ColorPickerBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp)
+        androidx.compose.animation.AnimatedVisibility(
+            visible = sheetState.isVisible,
+            enter = androidx.compose.animation.slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = androidx.compose.animation.core.spring(
+                    dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+                    stiffness = androidx.compose.animation.core.Spring.StiffnessLow
+                )
+            ) + androidx.compose.animation.fadeIn(
+                animationSpec = androidx.compose.animation.core.tween(300)
+            ),
+            exit = androidx.compose.animation.slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = androidx.compose.animation.core.tween(200)
+            ) + androidx.compose.animation.fadeOut(
+                animationSpec = androidx.compose.animation.core.tween(200)
+            )
         ) {
-            Text(
-                text = "Выбор цвета",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            ColorPicker(
-                initialColor = initialColor,
-                onColorSelected = onColorSelected
-            )
-
-            Button(
-                onClick = onDismiss,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 32.dp)
             ) {
-                Text("Готово")
+                Text(
+                    text = "Выбор цвета",
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                ColorPicker(
+                    initialColor = initialColor,
+                    onColorSelected = onColorSelected
+                )
+
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Text("Готово")
+                }
             }
         }
     }
