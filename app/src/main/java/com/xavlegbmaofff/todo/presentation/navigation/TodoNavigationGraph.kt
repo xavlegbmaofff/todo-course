@@ -9,14 +9,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import com.xavlegbmaofff.todo.data.datasource.FileStorage
 import com.xavlegbmaofff.todo.presentation.edit.TodoEditScreen
 import com.xavlegbmaofff.todo.presentation.list.TodoListScreen
 
 @Composable
 fun TodoNavigationGraph(
-    storage: FileStorage,
-    onSave: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backStack = remember {
@@ -37,20 +34,13 @@ fun TodoNavigationGraph(
                             },
                             onAddClick = {
                                 backStack.add(TodoEdit(null))
-                            },
-                            onSave = onSave
+                            }
                         )
                     }
                     is TodoEdit -> NavEntry(key) {
                         TodoEditScreen(
                             todoItemUid = key.todoItemUid,
-                            onSave = { item ->
-                                key.todoItemUid?.let { storage.delete(it) }
-                                storage.add(item)
-                                onSave()
-                                backStack.removeLastOrNull()
-                            },
-                            onBack = {
+                            onNavigateBack = {
                                 backStack.removeLastOrNull()
                             }
                         )
