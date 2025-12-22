@@ -10,8 +10,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.xavlegbmaofff.todo.ui.theme.TodoAppTheme
+import java.io.File
+import java.time.Instant
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,9 +22,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TodoAppTheme {
+                val filesDir = LocalContext.current.filesDir
+                val todoFile = File(filesDir, "todos.json")
+
+                val storage = FileStorage()
+                storage.load(todoFile)
+
+                val newItem = TodoItem(
+                    text = "Купить молоко",
+                    importance = Importance.HIGH,
+                    deadline = Instant.now().plusSeconds(3600)
+                )
+                storage.add(newItem)
+                storage.save(todoFile)
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = storage.items.first().text,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
