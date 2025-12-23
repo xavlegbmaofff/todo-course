@@ -1,4 +1,4 @@
-package com.xavlegbmaofff.todo
+package com.xavlegbmaofff.todo.data.model
 
 import android.graphics.Color
 import java.time.Instant

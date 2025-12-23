@@ -1,11 +1,14 @@
-package com.xavlegbmaofff.todo
+package com.xavlegbmaofff.todo.data.datasource
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import java.time.Instant
+import com.xavlegbmaofff.todo.data.model.TodoItem
+import com.xavlegbmaofff.todo.data.mappers.json
+import com.xavlegbmaofff.todo.data.mappers.parseTodoItem
 import org.json.JSONArray
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.time.Instant
 
 @RequiresApi(Build.VERSION_CODES.O)
 class FileStorage {
