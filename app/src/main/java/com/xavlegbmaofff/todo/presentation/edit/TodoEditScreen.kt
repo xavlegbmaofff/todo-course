@@ -57,7 +57,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.xavlegbmaofff.todo.data.model.Importance
-import com.xavlegbmaofff.todo.data.model.TodoItem
 import com.xavlegbmaofff.todo.presentation.edit.components.ColorPicker
 import com.xavlegbmaofff.todo.presentation.edit.components.ColorSelector
 import java.time.Instant
@@ -90,6 +89,7 @@ fun TodoEditScreen(
     Scaffold(
         topBar = {
             TodoEditTopBar(
+                header = if (todoItemUid == null) "Новая задача" else "Редактирование",
                 onBack = onNavigateBack,
                 onSave = {
                     viewModel.saveTodoItem(todoItemUid)
@@ -188,10 +188,11 @@ fun TodoEditScreen(
 @Composable
 private fun TodoEditTopBar(
     onBack: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    header: String
 ) {
     TopAppBar(
-        title = { Text("Редактирование") },
+        title = { Text(header) },
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
