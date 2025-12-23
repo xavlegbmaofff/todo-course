@@ -21,5 +21,8 @@ data class TodoItem(
     val importance: Importance = Importance.NORMAL,
     val color: Int = Color.WHITE,
     val deadline: Instant? = null,
-    val isDone: Boolean = false
+    val isDone: Boolean = false,
+    val createdAt: Instant = Instant.now(),
+    val changedAt: Instant = Instant.now(),
+    val lastUpdatedBy: String = "unknown" // device ID
 )
