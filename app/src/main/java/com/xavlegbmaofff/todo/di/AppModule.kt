@@ -1,7 +1,12 @@
 package com.xavlegbmaofff.todo.di
 
 import android.content.Context
-import com.xavlegbmaofff.todo.data.datasource.FileStorage
+import com.xavlegbmaofff.todo.domain.datasource.LocalDataSource
+import com.xavlegbmaofff.todo.data.datasource.LocalDataSourceImpl
+import com.xavlegbmaofff.todo.domain.datasource.RemoteDataSource
+import com.xavlegbmaofff.todo.data.datasource.RemoteDataSourceImpl
+import com.xavlegbmaofff.todo.data.repository.TodoRepositoryImpl
+import com.xavlegbmaofff.todo.domain.repository.TodoRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,9 +27,25 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFileStorage(todoFile: File): FileStorage {
-        val storage = FileStorage()
-        storage.load(todoFile)
-        return storage
+    fun provideLocalDataSource(todoFile: File): LocalDataSource {
+        return LocalDataSourceImpl(todoFile)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(): RemoteDataSource {
+        return RemoteDataSourceImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTodoRepository(
+        localDataSource: LocalDataSource,
+        remoteDataSource: RemoteDataSource
+    ): TodoRepository {
+        return TodoRepositoryImpl(
+            localDataSource = localDataSource,
+            remoteDataSource = remoteDataSource
+        )
     }
 }

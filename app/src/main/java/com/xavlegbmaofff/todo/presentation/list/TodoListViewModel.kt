@@ -1,34 +1,39 @@
 package com.xavlegbmaofff.todo.presentation.list
 
 import androidx.lifecycle.ViewModel
-import com.xavlegbmaofff.todo.data.datasource.FileStorage
+import androidx.lifecycle.viewModelScope
 import com.xavlegbmaofff.todo.data.model.TodoItem
+import com.xavlegbmaofff.todo.domain.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TodoListViewModel @Inject constructor(
-    private val storage: FileStorage
+    private val repository: TodoRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(TodoListUiState())
-    val uiState: StateFlow<TodoListUiState> = _uiState.asStateFlow()
 
-    init {
-        loadItems()
-    }
+    val uiState: StateFlow<TodoListUiState> = repository.getTodos()
+        .map { todos -> TodoListUiState(items = todos) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = TodoListUiState()
+        )
 
-    fun loadItems() {
-        _uiState.update {
-            it.copy(items = storage.items)
+    fun deleteItem(item: TodoItem) {
+        viewModelScope.launch {
+            repository.deleteTodo(item.uid)
         }
     }
 
-    fun deleteItem(item: TodoItem) {
-        storage.delete(item.uid)
-        loadItems()
+    fun syncWithServer() {
+        viewModelScope.launch {
+            repository.sync()
+        }
     }
 }

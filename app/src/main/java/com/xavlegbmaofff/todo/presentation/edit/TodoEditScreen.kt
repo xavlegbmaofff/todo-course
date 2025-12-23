@@ -68,8 +68,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TodoEditScreen(
     todoItemUid: String?,
-    onSave: (TodoItem) -> Unit,
-    onBack: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: TodoEditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -91,10 +90,10 @@ fun TodoEditScreen(
     Scaffold(
         topBar = {
             TodoEditTopBar(
-                onBack = onBack,
+                onBack = onNavigateBack,
                 onSave = {
-                    val item = viewModel.createTodoItem(todoItemUid)
-                    onSave(item)
+                    viewModel.saveTodoItem(todoItemUid)
+                    onNavigateBack()
                 }
             )
         },

@@ -33,7 +33,6 @@ import com.xavlegbmaofff.todo.presentation.list.components.TodoItemCard
 fun TodoListScreen(
     onItemClick: (TodoItem) -> Unit,
     onAddClick: () -> Unit,
-    onSave: () -> Unit,
     viewModel: TodoListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -92,7 +91,6 @@ fun TodoListScreen(
                             onClick = { onItemClick(item) },
                             onDelete = {
                                 viewModel.deleteItem(item)
-                                onSave()
                             }
                         )
                     }
